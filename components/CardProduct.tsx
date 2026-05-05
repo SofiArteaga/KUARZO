@@ -1,32 +1,37 @@
 import { usePlatform } from '@/hooks/usePlatform';
+import { useCartStore } from '@/src/store/useCartStore';
 import { router } from "expo-router";
 import React from 'react';
 import { Image, Pressable, Text, useWindowDimensions, View } from "react-native";
-import { useCart } from '../context/CartContext';
-
-export const CardProduct = ({ producto }: { producto: any }) => {
-    const { addItem } = useCart();
-    const platform = usePlatform();
-    const { width } = useWindowDimensions();
-    const isMobile = platform === 'movil' || width < 760;
-import { Image, Pressable, Text, View } from "react-native";
-import { useCartStore } from '@/src/store/useCartStore';
 
 export const CardProduct = ({ producto }: { producto: any }) => {
     const { addItem } = useCartStore();
+    const platform = usePlatform();
+    const { width } = useWindowDimensions();
+    const isMobile = platform === 'movil' || width < 760;
 
     const { id, nombre, descripcion, precio, imagen, categoria } = producto;
 
     return (
         <View className="w-full overflow-hidden rounded-3xl border border-[#e5e7eb] bg-white shadow-sm">
-            <Pressable onPress={() => router.push({ pathname: '/detalleProd', params: { id: id || nombre, nombre, descripcion, precio, imagen, categoria } })}>
+            <Pressable
+                onPress={() =>
+                    router.push({
+                        pathname: "/detalleProd",
+                        params: {
+                            id: id || nombre,
+                            nombre,
+                            descripcion,
+                            precio,
+                            imagen,
+                            categoria,
+                        },
+                    } as any)
+                }
+            >
                 {/* Sección superior con fondo gris */}
                 <View className="bg-transparent w-full h-44 flex justify-center items-center">
-                    <Image
-                        source={{ uri: imagen }}
-                        className="w-full h-44"
-                        resizeMode="contain"
-                    />
+                    <Image source={{ uri: imagen }} className="w-full h-44" resizeMode="contain" />
                 </View>
 
                 {/* Sección de textos */}
@@ -42,22 +47,20 @@ export const CardProduct = ({ producto }: { producto: any }) => {
 
             {/* Barra inferior: Precio y Botón amarillo */}
             <View className={`${isMobile ? 'flex-col gap-3 w-full' : 'flex-row items-stretch'} mt-4`}>
-
                 <Pressable
                     className={`${isMobile ? 'w-full py-4 px-4' : 'flex-1 py-3'} bg-primary justify-center items-center rounded-md`}
                     style={isMobile ? { minWidth: 0, width: '100%' } : undefined}
-                    onPress={() => addItem({
-                        id: nombre,
-                        nombre: nombre,
-                        precio: precio,
-                        imagen: imagen,
-                        cantidad: 1
-                    })}
-
+                    onPress={() =>
+                        addItem({
+                            id: nombre,
+                            nombre,
+                            precio,
+                            imagen,
+                            cantidad: 1,
+                        })
+                    }
                 >
-                    <Text
-                        className={`${isMobile ? 'text-sm' : 'text-base'} font-roboto-medium text-black uppercase text-center leading-5`}
-                    >
+                    <Text className={`${isMobile ? 'text-sm' : 'text-base'} font-roboto-medium text-black uppercase text-center leading-5`}>
                         Comprar
                     </Text>
                 </Pressable>
@@ -71,7 +74,7 @@ export const CardProduct = ({ producto }: { producto: any }) => {
                         numberOfLines={1}
                         ellipsizeMode="tail"
                     >
-                        {'$' + new Intl.NumberFormat("es-CO").format(precio)}
+                        {'$' + new Intl.NumberFormat('es-CO').format(precio)}
                     </Text>
                 </View>
             </View>
